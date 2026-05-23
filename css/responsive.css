@@ -1,0 +1,63 @@
+/*
+ * ============================================================
+ * FILE: css/responsive.css
+ * MỤC ĐÍCH: Điều chỉnh giao diện cho màn hình nhỏ hơn.
+ *
+ * Các breakpoint:
+ *   ≤ 1400px  → Grid 4 cột xuống 2 cột
+ *   ≤ 992px   → Ẩn sidebar, layout 1 cột
+ *   ≤ 640px   → Grid 1 cột, padding nhỏ hơn
+ *
+ * ĐỂ HIỆN SIDEBAR TRÊN MOBILE: Xoá "display: none" trong .sidebar
+ *   và thêm nút hamburger + CSS toggle tương ứng
+ * ============================================================
+ */
+
+@media (max-width: 1400px) {
+  .grid-cards,
+  .module-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  /* Ẩn sidebar — thêm hamburger menu nếu cần */
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  /* Layout 2 cột → 1 cột */
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* Header stack dọc */
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .topbar-right {
+    width: 100%;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-cards,
+  .module-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .main {
+    padding: 18px;
+  }
+}
