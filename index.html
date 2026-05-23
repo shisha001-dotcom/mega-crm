@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM Kế Toán - Thông tư 99</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS: Biến toàn cục và reset -->
+  <link rel="stylesheet" href="css/variables.css">
+
+  <!-- CSS: Layout chính (sidebar + main) -->
+  <link rel="stylesheet" href="css/layout.css">
+
+  <!-- CSS: Các component tái sử dụng (card, badge, button, form...) -->
+  <link rel="stylesheet" href="css/components.css">
+
+  <!-- CSS: Responsive cho màn hình nhỏ -->
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- ===== SIDEBAR (menu trái) ===== -->
+  <!-- File: components/sidebar.html (copy nội dung <aside> vào đây nếu dùng server) -->
+  <!-- Hiện tại inline để dùng không cần server -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">M</div>
+      <div>
+        <h2>MEGA CRM</h2>
+        <small>Thông tư 99</small>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-title">Tổng quan</div>
+      <div class="menu-item active" data-page="dashboard">
+        <div class="menu-icon">📊</div> Dashboard
+      </div>
+      <div class="menu-item" data-page="crm">
+        <div class="menu-icon">👥</div> CRM Khách hàng
+      </div>
+      <div class="menu-item" data-page="finance">
+        <div class="menu-icon">💰</div> Tài chính kế toán
+      </div>
+      <div class="menu-item" data-page="warehouse">
+        <div class="menu-icon">📦</div> Kho hàng
+      </div>
+      <div class="menu-item" data-page="invoice">
+        <div class="menu-icon">🧾</div> Hóa đơn điện tử
+      </div>
+      <div class="menu-item" data-page="bank">
+        <div class="menu-icon">🏦</div> Ngân hàng
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-title">Nghiệp vụ</div>
+      <div class="menu-item" data-page="voucher">
+        <div class="menu-icon">📑</div> Chứng từ
+      </div>
+      <div class="menu-item" data-page="report">
+        <div class="menu-icon">📈</div> Báo cáo tài chính
+      </div>
+      <div class="menu-item" data-page="ledger">
+        <div class="menu-icon">🧮</div> Sổ cái
+      </div>
+      <div class="menu-item" data-page="tax">
+        <div class="menu-icon">📋</div> Thuế GTGT
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== NỘI DUNG CHÍNH ===== -->
+  <main class="main">
+
+    <!-- Thanh header trên cùng -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Dashboard Tài Chính</h1>
+        <p>Quản lý CRM & kế toán doanh nghiệp theo thông tư 99</p>
+      </div>
+      <div class="topbar-right">
+        <input type="text" class="search-box" placeholder="Tìm kiếm khách hàng, hóa đơn, chứng từ...">
+        <div class="user-box">
+          <div class="avatar">AD</div>
+          <div>
+            <strong>Admin</strong>
+            <p style="font-size:12px;color:#6b7280">Quản trị hệ thống</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 thẻ thống kê -->
+    <section class="grid-cards">
+      <div class="card">
+        <div class="stat-top">
+          <div>
+            <div class="stat-value">12.8B</div>
+            <div class="stat-label">Doanh thu tháng</div>
+          </div>
+          <div class="stat-icon blue">💵</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="stat-top">
+          <div>
+            <div class="stat-value">1,284</div>
+            <div class="stat-label">Khách hàng</div>
+          </div>
+          <div class="stat-icon green">👥</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="stat-top">
+          <div>
+            <div class="stat-value">528</div>
+            <div class="stat-label">Hóa đơn chờ xử lý</div>
+          </div>
+          <div class="stat-icon orange">🧾</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="stat-top">
+          <div>
+            <div class="stat-value">94%</div>
+            <div class="stat-label">Đối soát thành công</div>
+          </div>
+          <div class="stat-icon red">📊</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hàng 1: Bảng chứng từ + Tổng quan nghiệp vụ -->
+    <section class="layout">
+
+      <!-- Bảng danh sách chứng từ -->
+      <div class="card">
+        <div class="section-title">
+          <h3>Danh sách chứng từ gần đây</h3>
+          <button class="btn" id="openVoucherModal">+ Tạo chứng từ</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Mã CT</th>
+              <th>Khách hàng</th>
+              <th>Ngày</th>
+              <th>Số tiền</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="voucherTableBody">
+            <!-- Dữ liệu được render từ js/voucher-table.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tổng quan progress bars -->
+      <div class="card">
+        <div class="section-title">
+          <h3>Tổng quan nghiệp vụ</h3>
+        </div>
+        <div class="progress-box" id="progressBox">
+          <!-- Render từ js/progress.js -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Hàng 2: Module hệ thống + Hoạt động gần đây -->
+    <section class="layout">
+
+      <!-- Module cards -->
+      <div class="card">
+        <div class="section-title">
+          <h3>Module hệ thống</h3>
+        </div>
+        <div class="module-grid" id="moduleGrid">
+          <!-- Render từ js/modules.js -->
+        </div>
+      </div>
+
+      <!-- Activity feed -->
+      <div class="card">
+        <div class="section-title">
+          <h3>Hoạt động gần đây</h3>
+        </div>
+        <div class="activity-list" id="activityList">
+          <!-- Render từ js/activity.js -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ===== MODAL TẠO CHỨNG TỪ ===== -->
+  <!-- Cấu trúc modal được giữ ở đây, logic xử lý ở js/voucher-modal.js -->
+  <div class="modal" id="voucherModal">
+    <div class="modal-content">
+      <div class="section-title">
+        <h3>Tạo chứng từ mới</h3>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Ngày chứng từ</label>
+          <input type="date" id="voucherDate">
+        </div>
+        <div class="form-group">
+          <label>Mã chứng từ tự động</label>
+          <div class="voucher-code-box" id="voucherCode">20260524001</div>
+        </div>
+        <div class="form-group full">
+          <label>Tên khách hàng</label>
+          <input type="text" id="voucherCustomer" placeholder="Nhập tên khách hàng">
+        </div>
+        <div class="form-group">
+          <label>Số tiền</label>
+          <input type="number" id="voucherAmount" placeholder="Nhập số tiền">
+        </div>
+        <div class="form-group">
+          <label>Trạng thái</label>
+          <select id="voucherStatus">
+            <option>Chờ xử lý</option>
+            <option>Đã duyệt</option>
+            <option>Hoàn tất</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Diễn giải</label>
+          <textarea id="voucherNote" rows="4" placeholder="Nhập nội dung chứng từ"></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" id="closeVoucherModal">Đóng</button>
+        <button class="btn" id="saveVoucherBtn">Lưu chứng từ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <!-- Thứ tự load: data trước, UI sau, modal sau cùng -->
+  <script src="js/data.js"></script>
+  <script src="js/voucher-table.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/modules.js"></script>
+  <script src="js/activity.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/voucher-modal.js"></script>
+
+</body>
+</html>
