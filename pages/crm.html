@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM Khách hàng - MEGA CRM</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <style>
+    .crm-toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .crm-toolbar .search-box {
+      flex: 1;
+      min-width: 220px;
+      padding: 10px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .crm-toolbar .search-box:focus { border-color: var(--primary); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th {
+      background: var(--bg);
+      color: var(--sub);
+      font-weight: 600;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f9fafb; }
+
+    .action-btns { display: flex; gap: 6px; }
+    .btn-edit, .btn-delete {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: 0.15s;
+    }
+    .btn-edit   { background: #dbeafe; color: #2563eb; }
+    .btn-delete { background: #fee2e2; color: #dc2626; }
+    .btn-edit:hover   { background: #bfdbfe; }
+    .btn-delete:hover { background: #fecaca; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      width: 680px;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    }
+    .modal-box h3 { font-size: 20px; margin-bottom: 24px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--sub); }
+    .form-group input {
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .form-group input:focus { border-color: var(--primary); }
+    .required-star { color: var(--danger); }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .state-row td {
+      text-align: center;
+      padding: 40px;
+      color: var(--sub);
+      font-size: 15px;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: #1f2937;
+      color: white;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    #toast.show    { opacity: 1; }
+    #toast.success { background: var(--success); }
+    #toast.error   { background: var(--danger);  }
+
+    #confirmOverlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    #confirmOverlay.open { display: flex; }
+    #confirmBox {
+      background: white;
+      border-radius: 16px;
+      padding: 28px 32px;
+      width: 360px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    #confirmBox h4 { margin-bottom: 10px; font-size: 17px; }
+    #confirmBox p  { color: var(--sub); font-size: 14px; margin-bottom: 22px; }
+    #confirmBox .form-actions { margin-top: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">M</div>
+      <div>
+        <h2>MEGA CRM</h2>
+        <small>Thông tư 99</small>
+      </div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">Tổng quan</div>
+      <div class="menu-item" onclick="location.href='../index.html'">
+        <div class="menu-icon">📊</div> Dashboard
+      </div>
+      <div class="menu-item active">
+        <div class="menu-icon">👥</div> CRM Khách hàng
+      </div>
+      <div class="menu-item"><div class="menu-icon">💰</div> Tài chính kế toán</div>
+      <div class="menu-item"><div class="menu-icon">📦</div> Kho hàng</div>
+      <div class="menu-item"><div class="menu-icon">🧾</div> Hóa đơn điện tử</div>
+      <div class="menu-item"><div class="menu-icon">🏦</div> Ngân hàng</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">Nghiệp vụ</div>
+      <div class="menu-item"><div class="menu-icon">📑</div> Chứng từ</div>
+      <div class="menu-item"><div class="menu-icon">📈</div> Báo cáo tài chính</div>
+      <div class="menu-item"><div class="menu-icon">🧮</div> Sổ cái</div>
+      <div class="menu-item"><div class="menu-icon">📋</div> Thuế GTGT</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>CRM Khách hàng</h1>
+        <p>Quản lý danh sách khách hàng — kết nối SQL Server</p>
+      </div>
+      <div class="topbar-right">
+        <div class="user-box">
+          <div class="avatar">AD</div>
+          <div>
+            <strong>Admin</strong>
+            <p style="font-size:12px;color:#6b7280">Quản trị hệ thống</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <h3>Danh sách khách hàng</h3>
+        <button class="btn" id="btnAddCustomer">+ Thêm khách hàng</button>
+      </div>
+
+      <div class="crm-toolbar">
+        <input type="text" class="search-box" id="searchInput"
+               placeholder="🔍  Tìm theo tên, mã, MST, địa chỉ...">
+        <button class="btn" id="btnReload"
+                style="background:#f3f4f6;color:#374151;">↻ Tải lại</button>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Mã KH</th>
+              <th>Tên tắt</th>
+              <th>Tên đầy đủ</th>
+              <th>MST</th>
+              <th>Địa chỉ</th>
+              <th>Email</th>
+              <th>Ngân hàng</th>
+              <th>Ngày tạo</th>
+              <th style="text-align:center;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="customerTableBody">
+            <tr class="state-row"><td colspan="10">⏳ Đang tải dữ liệu...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:14px;font-size:13px;color:var(--sub);" id="recordCount"></div>
+    </div>
+  </main>
+
+  <!-- MODAL THÊM / SỬA -->
+  <div class="modal-overlay" id="customerModal">
+    <div class="modal-box">
+      <h3 id="modalTitle">Thêm khách hàng mới</h3>
+      <input type="hidden" id="editId">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Mã khách hàng <span class="required-star">*</span></label>
+          <input type="text" id="fCustomerCode" placeholder="VD: KH0001">
+        </div>
+        <div class="form-group">
+          <label>Tên tắt</label>
+          <input type="text" id="fCustomerShortName" placeholder="VD: Minh Long">
+        </div>
+        <div class="form-group full">
+          <label>Tên đầy đủ <span class="required-star">*</span></label>
+          <input type="text" id="fCustomerFullName"
+                 placeholder="VD: Công ty TNHH Thương mại Minh Long">
+        </div>
+        <div class="form-group">
+          <label>Mã số thuế</label>
+          <input type="text" id="fTaxCode" placeholder="VD: 0123456789">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="fEmail" placeholder="VD: info@company.vn">
+        </div>
+        <div class="form-group full">
+          <label>Địa chỉ</label>
+          <input type="text" id="fAddress"
+                 placeholder="VD: 123 Nguyễn Huệ, Q.1, TP.HCM">
+        </div>
+        <div class="form-group">
+          <label>Ngân hàng thụ hưởng</label>
+          <input type="text" id="fBeneficiaryBank"
+                 placeholder="VD: Vietcombank - CN Hà Nội">
+        </div>
+        <div class="form-group">
+          <label>Số tài khoản</label>
+          <input type="text" id="fBankAccountNumber"
+                 placeholder="VD: 0011001234567">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" id="btnCloseModal">Hủy</button>
+        <button class="btn" id="btnSaveCustomer">💾 Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM XÓA -->
+  <div id="confirmOverlay">
+    <div id="confirmBox">
+      <h4>⚠️ Xác nhận xóa</h4>
+      <p id="confirmMsg">Bạn có chắc muốn xóa khách hàng này?</p>
+      <div class="form-actions">
+        <button class="btn btn-secondary" id="btnCancelDelete">Hủy</button>
+        <button class="btn" id="btnConfirmDelete"
+                style="background:var(--danger);">Xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <!-- JS — thứ tự quan trọng: customer API trước, logic sau -->
+  <script src="../data/customer.js"></script>
+  <script src="../js/customer.js"></script>
+
+</body>
+</html>
