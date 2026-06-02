@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập - MEGA CRM</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *  { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary:       #2563eb;
+      --primary-light: #dbeafe;
+      --bg:            #f4f7fb;
+      --card:          #ffffff;
+      --text:          #111827;
+      --sub:           #6b7280;
+      --border:        #e5e7eb;
+      --danger:        #dc2626;
+      --shadow:        0 10px 40px rgba(0,0,0,.10);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* Background pattern */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(37,99,235,.07) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(37,99,235,.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .login-wrap {
+      width: 100%; max-width: 420px;
+      position: relative; z-index: 1;
+    }
+
+    /* Logo header */
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .login-logo {
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      font-size: 26px; font-weight: 700; color: white;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(37,99,235,.35);
+    }
+    .login-header h1 { font-size: 24px; color: var(--text); margin-bottom: 6px; }
+    .login-header p  { font-size: 14px; color: var(--sub); }
+
+    /* Card */
+    .login-card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-group {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 18px;
+    }
+    .form-group label {
+      font-size: 13px; font-weight: 600; color: #374151;
+    }
+    .input-wrap { position: relative; }
+    .form-group input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-family: inherit; font-size: 14px;
+      outline: none; transition: .2s;
+      color: var(--text);
+    }
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+    }
+    .input-icon {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px; pointer-events: none;
+    }
+    .form-group input.has-icon { padding-left: 42px; }
+
+    /* Toggle password */
+    .toggle-pw {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--sub); font-size: 14px; padding: 4px;
+    }
+    .toggle-pw:hover { color: var(--text); }
+
+    /* Error message */
+    .error-msg {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--danger);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-bottom: 18px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* Submit button */
+    .btn-login {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none; border-radius: 14px;
+      padding: 14px;
+      font-size: 15px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+      transition: .2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-login:hover:not(:disabled)  { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,.35); }
+    .btn-login:disabled { opacity: .65; cursor: default; transform: none; }
+
+    /* Divider */
+    .divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    /* Default accounts hint */
+    .accounts-hint {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .accounts-hint h4 {
+      font-size: 13px; font-weight: 700;
+      color: var(--primary); margin-bottom: 10px;
+    }
+    .account-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px; font-size: 12px; color: #1e40af;
+      margin-bottom: 4px;
+    }
+    .account-row:first-of-type { font-weight: 600; color: var(--sub); font-size: 11px; }
+    .accounts-hint p {
+      font-size: 11px; color: var(--sub); margin-top: 8px;
+    }
+    .fill-btn {
+      background: none; border: 1px solid #bfdbfe; border-radius: 6px;
+      padding: 2px 8px; font-size: 11px; color: var(--primary);
+      cursor: pointer; font-family: inherit; transition: .15s;
+    }
+    .fill-btn:hover { background: var(--primary-light); }
+  </style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-header">
+    <div class="login-logo">M</div>
+    <h1>MEGA CRM</h1>
+    <p>Đăng nhập để tiếp tục</p>
+  </div>
+
+  <div class="login-card">
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="form-group">
+      <label>Tên đăng nhập</label>
+      <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" id="username" class="has-icon"
+               placeholder="Nhập tên đăng nhập" autocomplete="username">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Mật khẩu</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="password" class="has-icon"
+               placeholder="Nhập mật khẩu" autocomplete="current-password">
+        <button class="toggle-pw" type="button" id="togglePw" title="Hiện/ẩn mật khẩu">👁</button>
+      </div>
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">
+      <span id="loginBtnText">Đăng nhập</span>
+    </button>
+
+    <hr class="divider">
+
+    <!-- Gợi ý tài khoản mặc định -->
+    <div class="accounts-hint">
+      <h4>🔑 Tài khoản mặc định (đổi ngay sau khi deploy)</h4>
+      <div class="account-row"><span>Username</span><span>Password</span><span>Quyền</span></div>
+      <div class="account-row">
+        <span>admin</span><span>Admin@123</span><span>Quản trị</span>
+        <button class="fill-btn" onclick="fill('admin')">Dùng</button>
+      </div>
+      <div class="account-row">
+        <span>manager</span><span>Admin@123</span><span>Quản lý kho</span>
+        <button class="fill-btn" onclick="fill('manager')">Dùng</button>
+      </div>
+      <div class="account-row">
+        <span>staff</span><span>Admin@123</span><span>Nhân viên</span>
+        <button class="fill-btn" onclick="fill('staff')">Dùng</button>
+      </div>
+      <p>⚠ Tài khoản mặc định chỉ để phát triển/demo. Vui lòng đổi mật khẩu trước khi dùng thật.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE = 'http://localhost:3000/api';
+
+// Auto-redirect nếu đã đăng nhập
+const saved = localStorage.getItem('mega_session');
+if (saved) {
+  try {
+    const s = JSON.parse(saved);
+    if (s.token) window.location.href = 'inventory.html';
+  } catch(e) {}
+}
+
+// Toggle password visibility
+document.getElementById('togglePw').addEventListener('click', () => {
+  const inp = document.getElementById('password');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+});
+
+// Enter key
+document.getElementById('password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('username').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('password').focus();
+});
+
+function fill(role) {
+  document.getElementById('username').value = role;
+  document.getElementById('password').value = 'Admin@123';
+  document.getElementById('username').focus();
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideError() {
+  document.getElementById('errorMsg').classList.remove('show');
+}
+
+async function doLogin() {
+  hideError();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  if (!username) { showError('Vui lòng nhập tên đăng nhập.'); return; }
+  if (!password) { showError('Vui lòng nhập mật khẩu.'); return; }
+
+  const btn  = document.getElementById('loginBtn');
+  const text = document.getElementById('loginBtnText');
+  btn.disabled = true; text.textContent = '⏳ Đang xác thực...';
+
+  try {
+    const res  = await fetch(`${BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message);
+
+    // Lưu session vào localStorage
+    localStorage.setItem('mega_session', JSON.stringify({
+      token:    json.token,
+      user:     json.user,
+      loginAt:  Date.now()
+    }));
+
+    // Redirect
+    window.location.href = 'inventory.html';
+  } catch(e) {
+    showError(e.message || 'Lỗi kết nối server.');
+    btn.disabled = false; text.textContent = 'Đăng nhập';
+  }
+}
+</script>
+</body>
+</html>
